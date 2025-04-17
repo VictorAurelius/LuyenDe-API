@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tìm kiếm Giảng viên</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            width: 300px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tìm kiếm Giảng viên theo Bộ môn</h1>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Nhập tên bộ môn...">
+        <button onclick="searchGiangVien()">Tìm kiếm</button>
+    </div>
+
+    <div id="result">
+        <table id="resultTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Mã GV</th>
+                    <th>Tên GV</th>
+                    <th>Bộ môn</th>
+                    <th>Giới tính</th>
+                    <th>Địa chỉ</th>
+                    <th>Số điện thoại</th>
+                </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        async function searchGiangVien() {
+            const searchTerm = document.getElementById('searchInput').value;
+            const resultTable = document.getElementById('resultTable');
+            const resultBody = document.getElementById('resultBody');
+
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/giang-vien/${encodeURIComponent(searchTerm)}`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    resultBody.innerHTML = '';
+                    data.data.forEach(gv => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${gv.MaGV}</td>
+                            <td>${gv.TenGV}</td>
+                            <td>${gv.TenBM}</td>
+                            <td>${gv.GioiTinh}</td>
+                            <td>${gv.DiaChi}</td>
+                            <td>${gv.SoDT}</td>
+                        `;
+                        resultBody.appendChild(row);
+                    });
+                    resultTable.style.display = 'table';
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                resultTable.style.display = 'none';
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error';
+                errorDiv.textContent = `Lỗi: ${error.message}`;
+                document.getElementById('result').appendChild(errorDiv);
+            }
+        }
+
+        // Add event listener for Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchGiangVien();
+            }
+        });
+    </script>
+</body>
+
+</html>
