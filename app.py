@@ -2,8 +2,17 @@ from fastapi import FastAPI
 from typing import List
 import mysql.connector
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 app = FastAPI()
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="."), name="static")
+
+@app.get("/")
+async def read_root():
+    return FileResponse('index.html')
 
 # Enable CORS
 app.add_middleware(
@@ -18,8 +27,8 @@ app.add_middleware(
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': '',  # Change this to your MySQL password
-    'database': 'DuLieu'
+    'password': '123456',  # Change this to your MySQL password
+    'database': 'LuyenDe'
 }
 
 @app.get("/api/giang-vien/{ten_bo_mon}")

@@ -1,6 +1,6 @@
 -- Create database
-CREATE DATABASE IF NOT EXISTS DuLieu;
-USE DuLieu;
+CREATE DATABASE IF NOT EXISTS luyende;
+USE luyende;
 
 -- Create tables
 CREATE TABLE IF NOT EXISTS tblBoMon (
